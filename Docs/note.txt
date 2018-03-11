@@ -1,0 +1,49 @@
+PRESS ENTER TO GET NUMBER
+
+YOUR NUMBER IS: 10
+
+# before notification:
+|  | ---> // 
+Input Cellphone Number
+|                    |
+Is this your number? 
+09055582831?
+Yes
+No
+Cancel
+
+1: 50
+2: 30
+3: 80
+
+
+Receiver Side (Server PC)//
+Store to database
+
+//get info from database
+if (user_num=currentServe){
+	notify(user_phone);
+}
+
+"Hello you're serving number (30) is about to be served"
+
+Current serving = 20
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
