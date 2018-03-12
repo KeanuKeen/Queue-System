@@ -1,0 +1,16 @@
+#Whitelist
+
+!*/
+!**.asm
+!**.pdsprj
+!**.zip
+!**.inc
+!Docs/*
+!Debug/COM_1.X/DELAY.inc
+!Resources/*
+
+
+#Ignore
+
+*/
+backup/**
