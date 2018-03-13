@@ -10,10 +10,12 @@
     CONFIG  LVP = OFF 
     
     cblock 0x20
-    column
-    row
-    delay_count
-    temp_w
+	column
+	row
+	delay_count
+	temp_w
+	temp
+	isr_temp
     endc
     
     org 0x00
@@ -26,15 +28,20 @@
     
 main:
     call init_port
-    call init_interrupt
-    CALL InitiateLCD
-    CALL Enable
-    CALL delay
-    
+    call initInterrupt
+    CALL initLCD    
 wait:
-    call enable_keypad
+    call init_keypad
     goto wait
-    
+
+isr:
+    goto isr_keypad
+isr_stop:
+    movf temp_w, W
+    bcf INTCON, RBIF
+ 
+    retfie
+
 init_port:
     bsf STATUS, 5
     clrf TRISD
@@ -46,6 +53,15 @@ init_port:
     bcf TRISC, 2
     bcf TRISC, 4
     
+    bcf TRISA, 0
+    bcf TRISA, 1
+    bcf TRISA, 2
+    bcf TRISA, 3
+    
+    bsf TRISB, 5
+    bsf TRISB, 6
+    bsf TRISB, 7
+    
     bcf STATUS,5
     
     bcf LATB, 0
@@ -56,166 +72,18 @@ init_port:
     bcf LATC, 2
     bcf LATC, 4
     
+    clrf LATA
     clrf LATD
     
-    
-    movlw 0x1F
-    movwf row
-    movwf LATC
-    
-    return
-    
-init_interrupt:
-    bcf INTCON, RBIF
-    bsf INTCON, RBIE
-    bsf INTCON, GIE
-		
-		
-    return
-    
-enable_keypad:
-    BSF LATB, 0
-    call generate_delay
-    movf row, W
-    movwf LATC
-    
-next_row:
-    btfsc row, 7
-    goto reset_row
-
-    bsf STATUS, C
-    rlcf row
-    movf row, W
-    movwf LATC
-    
-    goto next_row
-
-reset_row:
     movlw 0x10
     movwf row
     movwf LATC
     
-    goto next_row
-
-    return
-
-generate_delay:
-    call delay
-    call delay
-
-    return
-
-delay:
-    movlw 0xFF
-    movwf delay_count
-
-count:
-    nop
-    decfsz delay_count
-    goto count
-
-    return
-
-isr:
-    movwf temp_w
-    btfsc PORTB, 4
-    goto column_1_code
-    btfsc PORTB, 5
-    goto column_2_code
-    btfsc PORTB, 6
-    goto column_3_code
-    goto exit_isr
-
-column_1_code:
-    call get_column_1_code
-    CALL Enable
-    movwf LATD
-    goto exit_isr
-column_2_code:
-    call get_column_2_code
-    CALL Enable
-    movwf LATD
-    goto exit_isr
-    
-column_3_code:
-    call get_column_3_code
-    CALL Enable
-    movwf LATD
-    goto exit_isr
-    
-exit_isr:
-    movf temp_w, W
-    bcf INTCON, RBIF
+    return    
  
-    retfie
-
-get_column_1_code:
-    btfsc row, 0
-    retlw 0x31
-    btfsc row, 1
-    retlw 0x34
-    btfsc row, 2
-    retlw 0x37
-    btfsc row, 4
-    retlw 0x2A
-    retlw 0x00
-
-get_column_2_code:
-    btfsc row, 0
-    retlw 0x32
-    btfsc row, 1
-    retlw 0x35
-    btfsc row, 2
-    retlw 0x38
-    btfsc row, 4
-    retlw 0x30
-    
-    retlw 0x00
-
-get_column_3_code:
-    btfsc row, 0
-    retlw 0x33
-    btfsc row, 1
-    retlw 0x36
-    btfsc row, 2
-    retlw 0x39
-    btfsc row, 4
-    retlw 0x23
-    
-    retlw 0x00
-
-    return
-    
-InitiateLCD:
-    BCF LATB, 0 ; Setting RS as 0 (Sends commands to LCD)
-    CALL delay
+#INCLUDE <lcd.inc>
+#INCLUDE <delay.inc>
+#INCLUDE <interrupt.inc>
+#INCLUDE <keypad.inc>
  
-    MOVLW b'00000001' ; Clearing display
-    MOVWF LATD 
-    CALL Enable
-    CALL delay
- 
-    MOVLW b'00111000' ; Funtion set
-    MOVWF LATD 
-    CALL Enable
-    CALL delay
- 
-    MOVLW b'00001111' ; Display on off
-    MOVWF LATD
-    CALL Enable
-    CALL delay
- 
-    MOVLW b'00000110' ; Entry mod set blinking
-    MOVWF LATD
-    CALL Enable
-    CALL delay
- 
-    RETURN
-    
-Enable: 
- BSF LATB,1 ; E pin is high, (LCD is processing the incoming data)
- NOP
- BCF LATB,1 ; E pin is low, (LCD does not care what is happening)
- RETURN
-
     end

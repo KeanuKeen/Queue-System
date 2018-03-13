@@ -82,7 +82,6 @@ enable_keypad:
 next_row:
     btfsc row, 7
     goto reset_row
-
     bsf STATUS, C
     rlcf row
     movf row, W
@@ -128,19 +127,18 @@ isr:
 
 column_1_code:
     call get_column_1_code
-    CALL Enable
-    movwf LATD
+;    CALL Enable
+;    movwf LATD
+    call output_lcd
     goto exit_isr
 column_2_code:
     call get_column_2_code
-    CALL Enable
-    movwf LATD
+    call output_lcd
     goto exit_isr
     
 column_3_code:
     call get_column_3_code
-    CALL Enable
-    movwf LATD
+    call output_lcd
     goto exit_isr
     
 exit_isr:
@@ -186,36 +184,37 @@ get_column_3_code:
 
     return
     
-InitiateLCD:
-    BCF LATB, 0 ; Setting RS as 0 (Sends commands to LCD)
-    CALL delay
- 
-    MOVLW b'00000001' ; Clearing display
-    MOVWF LATD 
-    CALL Enable
-    CALL delay
- 
-    MOVLW b'00111000' ; Funtion set
-    MOVWF LATD 
-    CALL Enable
-    CALL delay
- 
-    MOVLW b'00001111' ; Display on off
-    MOVWF LATD
-    CALL Enable
-    CALL delay
- 
-    MOVLW b'00000110' ; Entry mod set blinking
-    MOVWF LATD
-    CALL Enable
-    CALL delay
- 
-    RETURN
+;InitiateLCD:
+;    BCF LATB, 0 ; Setting RS as 0 (Sends commands to LCD)
+;    CALL delay
+; 
+;    MOVLW b'00000001' ; Clearing display
+;    MOVWF LATD 
+;    CALL Enable
+;    CALL delay
+; 
+;    MOVLW b'00111000' ; Funtion set
+;    MOVWF LATD 
+;    CALL Enable
+;    CALL delay
+; 
+;    MOVLW b'00001111' ; Display on off
+;    MOVWF LATD
+;    CALL Enable
+;    CALL delay
+; 
+;    MOVLW b'00000110' ; Entry mod set blinking
+;    MOVWF LATD
+;    CALL Enable
+;    CALL delay
+; 
+;    RETURN
     
 Enable: 
  BSF LATB,1 ; E pin is high, (LCD is processing the incoming data)
  NOP
  BCF LATB,1 ; E pin is low, (LCD does not care what is happening)
  RETURN
-
+ 
+#INCLUDE <lcd.inc>
     end
