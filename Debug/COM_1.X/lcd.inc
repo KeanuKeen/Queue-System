@@ -47,11 +47,19 @@ write_lcd:
     
     return
 
+set_col:
+    movwf lcd_col
+    bsf lcd_meta, 0
+    return
+    
 set_home:
     movwf temp
     call command_mode
     movlw 0x80
+    btfsc lcd_meta, 0
+    addwf lcd_col, 0
     call write_lcd
+    bcf lcd_meta, 0
     movf temp, W
     return
     
@@ -59,7 +67,10 @@ set_second:
     movwf temp
     call command_mode
     movlw 0xC0
+    btfsc lcd_meta, 0
+    addwf lcd_col, 0
     call write_lcd
+    bcf lcd_meta, 0
     movf temp, W
     return
 

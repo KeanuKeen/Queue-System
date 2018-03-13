@@ -30,6 +30,8 @@
 	isr_temp
 	row
 	keypad_enabled
+	lcd_col
+	lcd_meta
     ENDC
 
    
@@ -49,7 +51,19 @@ head:
     call initInterrupt
     call initPort
     call initLCD
-    call initTable
+    
+    movlw  UPPER bootUpDB
+    call set_upper_table
+    movlw  HIGH bootUpDB
+    call set_higher_table
+    movlw  LOW bootUpDB
+    call set_lower_table
+    
+    movlw 0x01
+    call set_col
+    call set_home
+    
+    call readDB
     
 main:
 ;    MAGIC!
@@ -60,29 +74,26 @@ main:
     
     goto main
     
-initTable:
-    movlw  UPPER stringDB
-    movwf  TBLPTRU
-    movlw  HIGH stringDB
-    movwf  TBLPTRH   
-    movlw  LOW stringDB
-    movwf  TBLPTRL
-    call command_mode
-    movlw 0x80
-    call write_lcd
-    call readDB
-    return
-;goto initTable	    ; Loop for ever
-    
 readDB:   
     tblrd*+		    ; read into TABLAT and increment   
     movf TABLAT, W	    ; get data
     btfsc STATUS, Z	    ; zero if end of message
-    return
-    call output_lcd	    ; Output to console
+    return		    ; get out if End of message
+    call output_lcd	    ; if there's a msg, output to lcd
     call delay_5ms
     goto readDB		    ; Next char
+
+set_upper_table:
+    movwf TBLPTRU   
+    return
     
+set_higher_table:
+    movwf TBLPTRH   
+    return
+    
+set_lower_table:
+    movwf TBLPTRL   
+    return
 
 ; </////// ISR ///////> ;
     
