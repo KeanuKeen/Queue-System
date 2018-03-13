@@ -26,6 +26,7 @@
     CBLOCK 0x20
 	temp	
 	delay_count
+	db_output
     ENDC
 
    

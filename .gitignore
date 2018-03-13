@@ -1,16 +1,24 @@
 #Whitelist
 
-!*/
-!**.asm
-!**.pdsprj
-!**.zip
-!**.inc
-!Docs/*
-!Debug/COM_1.X/DELAY.inc
-!Resources/*
+
 
 
 #Ignore
 
-*/
-backup/**
+*.fil
+*.workspace
+*.pdsbak
+*.err
+*.lst
+*.o
+*.d
+*.cof
+*.map
+*.hex
+*.xml
+*.bash
+*.mk
+*.properties
+makefile
+backup/
+node_modules/
