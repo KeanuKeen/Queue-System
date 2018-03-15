@@ -8,4 +8,69 @@ count:
     return
     
 
-
+big_delay:
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    call delay_5ms
+    return

@@ -29,9 +29,11 @@
 	db_output
 	isr_temp
 	row
-	keypad_enabled
+	keypad_meta
 	lcd_col
 	lcd_meta
+	logic_meta
+	key_input
     ENDC
 
    
@@ -51,26 +53,126 @@ head:
     call initInterrupt
     call initPort
     call initLCD
+    clrf keypad_meta
+    clrf logic_meta
+    clrf key_input
+   
+    call big_delay
     
-    movlw  UPPER bootUpDB
-    call set_upper_table
+    bsf logic_meta, 0 ; refresh serve que
+    bsf logic_meta, 2
+    bsf logic_meta, 3
+    bsf logic_meta, 4
     
-    movlw  HIGH bootUpDB
-    call set_higher_table
-    
-    movlw  LOW bootUpDB
-    call set_lower_table
-    
-    call set_home
-    
-    call string_out
-    
+    bsf keypad_meta, 0	; enable keypad
+    bcf keypad_meta, 1 ; enable read of key input
+    call serve_queue
+    call big_delay
+    call big_delay
+    call big_delay
 main:
 ;    MAGIC!
-;    btfsc PORTA, 0
-;    bsf LATC, 1
-;    bcf LATC, 1
+    
+;    call init_keypad
+
+; </////// SERVE QUEUE ///////> ;
+    
+    btfss logic_meta, 0
+    goto skip_serve_queue
+serve_queue_loop:
+    call clear_lcd
+    call serve_queue
+    bcf logic_meta, 0
+    call set_home
+;    goto serve_queue_loop
+skip_serve_queue:
+    
+    
+keypad:
+    bsf INTCON, RBIE
+    clrf key_input
+;    bcf keypad_meta,1
+;    call set_home
     call init_keypad
+    
+    movlw 0x23
+    cpfseq key_input
+    goto keypad
+
+; </------ SERVE QUEUE ------/> ;
+ 
+
+; </////// ASK NUM ///////> ;
+    
+;    goto skip_ask_num
+    btfss logic_meta, 2
+    goto skip_ask_num
+ask_num_loop:
+    call clear_lcd
+    call ask_num
+
+    bcf logic_meta, 2 
+skip_ask_num:
+    
+keypad_ask_num:
+    bsf INTCON, RBIE
+    clrf key_input
+    call init_keypad
+    
+    movlw 0x23
+    cpfseq key_input
+    goto keypad_ask_num
+    
+; </------ ASK NUM ------/> ;
+    
+
+; </////// INPUT NUM ///////> ;
+    
+    btfss logic_meta, 3
+    goto skip_input_num
+input_num_loop:
+    call clear_lcd
+    call input_num
+
+    bcf logic_meta, 3
+    
+skip_input_num:
+    
+keypad_input_num:
+    bsf INTCON, RBIE
+    clrf key_input
+    call init_keypad
+    
+    movlw 0x23
+    cpfseq key_input
+    goto keypad_input_num
+    
+; </------ INPUT NUM ------/> ;
+    
+    
+    
+; </////// CHECK-OUT ///////> ;
+    
+    btfss logic_meta, 4
+    goto skip_checkout
+checkout_loop:
+    call clear_lcd
+    call check_out
+
+    bcf logic_meta, 4
+    
+skip_checkout:
+    
+keypad_checkout:
+    bsf INTCON, RBIE
+    clrf key_input
+    call init_keypad
+    
+    movlw 0x23
+    cpfseq key_input
+    goto keypad_checkout
+    
+; </------ CHECK-OUT ------/> ;
     
     goto main
    
@@ -119,15 +221,7 @@ test_uart:
     
     goto isr_stop
     
-    
-; </////// STRING DB ///////> ;
-    
-stringDB:
-    db "Hello World!", 0
-bootUpDB:
-    db "Queue System!", 0
-
-; </------ STRING DB ------/> ;    
+  
     
     
     

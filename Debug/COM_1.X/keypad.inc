@@ -1,6 +1,7 @@
 ; </////// JUGGLE ROWS ///////> ;
 
  init_keypad:    
+
     bsf LATC, 4
     bsf row, 4
     call delay_5ms
@@ -25,7 +26,7 @@
     bcf LATC, 0
     bcf row, 0
 
-    goto init_keypad
+    return
     
 ; </------ JUGGLE ROWS ------/> ;
 
@@ -46,6 +47,10 @@ exit_isr:
 ; 
 ;    retfies
 ;    bcf keypad_enabled, 0
+;    bsf LATA, 4
+    bsf LATA, 5
+;    bsf keypad_meta, 1
+    bcf INTCON, RBIE
     goto isr_stop
 
 
@@ -54,24 +59,30 @@ exit_isr:
 column_1_code:
     call get_column_1_code
     
-    call set_home
-    call output_lcd
+;    call set_home
+    movwf key_input
+;    call output_lcd
+    call writeUART
     
     goto exit_isr
     
 column_2_code:
     call get_column_2_code
     
-    call set_home
-    call output_lcd
+;    call set_home
+    movwf key_input
+;    call output_lcd
+    call writeUART
     
     goto exit_isr
     
 column_3_code:
     call get_column_3_code
     
-    call set_home
-    call output_lcd
+;    call set_home
+    movwf key_input
+;    call output_lcd
+    call writeUART
     
     goto exit_isr
 

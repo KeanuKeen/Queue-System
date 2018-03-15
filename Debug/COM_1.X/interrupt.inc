@@ -4,7 +4,7 @@ initInterrupt:
     bsf INTCON, INT0IE	    ; enable ext. int. (RB0)
     bsf PIE1, RCIE	    ; enable receive UART int. flag bit (RX)
     bsf INTCON, PEIE	    ; enable periphal int. (TX/RX)
-    bsf INTCON, RBIE
+;    bsf INTCON, RBIE
     bcf PIR1, TXIE
     bsf INTCON, GIE	    ; enable global int. (All Interrupt bits)
     return
